@@ -40,7 +40,7 @@ impl Color {
         let r = (self.r.min(1.0).max(0.0).powf(gamma_correction) * 255.0) as u32;
         let g = (self.g.min(1.0).max(0.0).powf(gamma_correction) * 255.0) as u32;
         let b = (self.b.min(1.0).max(0.0).powf(gamma_correction) * 255.0) as u32;
-        (r << 16) | (g << 8) | b
+        0x00ffffff & (r << 16) | (g << 8) | b
     }
 }
 

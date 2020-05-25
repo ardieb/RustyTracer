@@ -1,6 +1,6 @@
 use crate::camera::Camera;
 use crate::color::Color;
-use crate::intersectable::Intersectable;
+use crate::shapes::Shape;
 use crate::light::Light;
 use crate::cfg::Cfg;
 use crate::ray::Ray;
@@ -12,7 +12,7 @@ pub struct Renderer {
     pub width: u32,
     pub height: u32,
     pub camera: Camera,
-    pub objects: Vec<Box<dyn Intersectable>>,
+    pub objects: Vec<Box<dyn Shape>>,
     pub lights: Vec<Light>,
     pub bg_color: Color,
     pub options: Cfg,
@@ -50,15 +50,15 @@ impl Renderer {
         (0..self.width * self.height)
             .into_par_iter()
             .map(|pixel| {
-                let x = pixel % self.height;
-                let y = pixel / self.height;
+                let x = (pixel % self.height) as u32;
+                let y = (pixel / self.height) as u32;
 
                 let u = f64::from(x) / w;
                 let v = f64::from(y) / h;
 
                 let ray = self.camera.get_ray(u, v);
 
-                let color = Ray::cast_ray(ray, &self.objects, &self.lights, &self.options, 0)
+                let color = Ray::cast_ray(ray, &self.objects, &self.lights, &self.options, 2)
                     .unwrap_or(self.bg_color);
                 color.to_u32(gamma_correction)
             })

@@ -1,5 +1,5 @@
 use crate::color::Color;
-use crate::intersectable::Intersectable;
+use crate::shapes::Shape;
 use crate::cfg::Cfg;
 use crate::ray::Intersection;
 use crate::ray::Ray;
@@ -21,7 +21,7 @@ pub enum LightType {
 
 impl Light {
     pub fn shade(
-        objects: &[Box<dyn Intersectable>],
+        objects: &[Box<dyn Shape>],
         lights: &[Light],
         options: &Cfg,
         intersection: Intersection,

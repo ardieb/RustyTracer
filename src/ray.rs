@@ -1,4 +1,4 @@
-use crate::intersectable::Intersectable;
+use crate::shapes::Shape;
 use crate::color::Color;
 use crate::light::Light;
 use crate::material::Material;
@@ -20,7 +20,7 @@ pub struct Intersection {
 }
 
 impl Ray {
-    pub fn intersect(ray: Ray, objects: &[Box<dyn Intersectable>]) -> Option<Intersection> {
+    pub fn intersect(ray: Ray, objects: &[Box<dyn Shape>]) -> Option<Intersection> {
         let mut distance = std::f64::INFINITY;
         let mut material = Material::neutral();
         let mut normal = Vec3::zero();
@@ -52,7 +52,7 @@ impl Ray {
 
     pub fn cast_ray(
         ray: Ray,
-        objects: &[Box<dyn Intersectable>],
+        objects: &[Box<dyn Shape>],
         lights: &[Light],
         options: &Cfg,
         depth: u8,

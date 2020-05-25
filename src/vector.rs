@@ -1,4 +1,4 @@
-use std::ops::{Add, Mul, Neg, Sub};
+use std::ops::{Add, Mul, Neg, Sub, Div};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Vec3 {
@@ -54,6 +54,10 @@ impl Vec3 {
     pub fn correct(&self, other: Vec3) -> Vec3 {
         *self + (other * crate::EPSILON)
     }
+
+    pub fn inv(&self) -> Vec3 {
+        Vec3::new(1.0/self.x, 1.0/self.y, 1.0/self.z)
+    }
 }
 
 impl Add for Vec3 {
@@ -100,6 +104,30 @@ impl Mul for Vec3 {
             x: self.x * rhs.x,
             y: self.y * rhs.y,
             z: self.z * rhs.z,
+        }
+    }
+}
+
+impl Div<f64> for Vec3 {
+    type Output = Self;
+
+    fn div(self, factor: f64) -> Vec3 {
+        Vec3 {
+            x: self.x / factor,
+            y: self.y / factor,
+            z: self.z / factor,
+        }
+    }
+}
+
+impl Div<Vec3> for f64 {
+    type Output = Vec3;
+
+    fn div(self, rhs: Vec3) -> Vec3 {
+        Vec3 {
+            x: self / rhs.x,
+            y: self / rhs.y,
+            z: self / rhs.z,
         }
     }
 }

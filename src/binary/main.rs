@@ -1,23 +1,19 @@
 use rusty_trace::camera::Camera;
 use rusty_trace::color::Color;
-use rusty_trace::intersectable::Plane;
-use rusty_trace::intersectable::Sphere;
 use rusty_trace::light::Light;
 use rusty_trace::light::LightType;
 use rusty_trace::material::Material;
 use rusty_trace::cfg::Cfg;
 use rusty_trace::renderer::Renderer;
 use rusty_trace::vector::Vec3;
+use rusty_trace::shapes::sphere::Sphere;
+use rusty_trace::shapes::plane::Plane;
+use rusty_trace::shapes::aabb::Aabb;
 
 use std::time::Instant;
-use minifb::{Key, Window, WindowOptions};
-
-enum RenderDest {
-    File,
-    Window,
-}
-
-const DEST: RenderDest = RenderDest::Window;
+use arrayfire;
+use arrayfire::Array;
+use arrayfire::Dim4;
 
 fn main() {
     let options = Cfg {
@@ -29,21 +25,32 @@ fn main() {
         reflections: true,
     };
 
-    let width = 1024;
-    let height = 512;
+    let width = 1920;
+    let height = 1080;
     let aspect_ratio = width as f64 / height as f64;
 
     let renderer = Renderer {
         width,
         height,
         camera: Camera::new(
-            Vec3::new(0., -3., 5.),
+            Vec3::new(0., -3., 10.),
             Vec3::new(0., 0., -20.),
             60.,
             aspect_ratio,
-            45.,
+            0.,
         ),
         objects: vec![
+            Box::new( Aabb {
+                min: Vec3::new(-1., 0., -3.),
+                max: Vec3::new(3.0, 3.0, 3.0),
+                material: Material {
+                    color: Color::from_u8(0xD4, 0xAF, 0x37),
+                    diffuse: 0.8,
+                    specular: 0.2,
+                    specular_exponent: 5.0,
+                    reflectiveness: 0.6,
+                },
+            }),
             Box::new(Sphere {
                 position: Vec3::new(-3.0, -5.0, -16.0),
                 radius: 2.8,
@@ -103,7 +110,7 @@ fn main() {
                 position: Vec3::new(0.0, -8.0, 0.0),
                 normal: Vec3::new(0.0, -1.0, 0.0),
                 material: Material {
-                    color: Color::from_u8(0x66, 0x33, 0x66),
+                    color: Color::from_u8(0xD4, 0xAF, 0x37),
                     diffuse: 0.8,
                     specular: 0.2,
                     specular_exponent: 5.0,
@@ -141,37 +148,14 @@ fn main() {
         options,
     };
 
-    match DEST {
-        RenderDest::File => {
-            let now = Instant::now();
-            renderer.render_to_file("result.png".to_string());
-            let duration = now.elapsed();
+    let now = Instant::now();
+    renderer.render_to_file("result.png".to_string());
+    let duration = now.elapsed();
 
-            println!(
-                "{} milliseconds elapsed.",
-                duration.as_secs() * 1000 + u64::from(duration.subsec_millis())
-            );
-        }
-        RenderDest::Window => {
-            let mut window = Window::new(
-                "RustyTracer - Q to exit",
-                width as usize,
-                height as usize,
-                WindowOptions::default(),
-            )
-                .unwrap_or_else(|e| {
-                    panic!("{}", e);
-                });
-            let buffer = renderer.render_to_buf();
-            while window.is_open() && !window.is_key_down(Key::Q) {
-                // We unwrap here as we want this code to exit if it fails.
-                // Real applications may want to handle this in a different way.
-                window.update_with_buffer(
-                    buffer.as_slice(),
-                    width as usize,
-                    height as usize)
-                    .unwrap();
-            }
-        }
-    };
+    // let buf = renderer.render_to_buf(); TODO render to window buffer
+
+    println!(
+        "{} milliseconds elapsed.",
+        duration.as_secs() * 1000 + u64::from(duration.subsec_millis())
+    );
 }
