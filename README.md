@@ -6,3 +6,4 @@ This is a pet project to test the water of rust and ray tracing! So far, things 
 - Add support for world transformations
 - Add support for rendering to the window (Candidate tech is arrayfire rust wrapper)
 - Vectorize computations using OpenCL arrayfire
+- Add collision detection for world objects
