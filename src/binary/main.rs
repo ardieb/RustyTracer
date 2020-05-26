@@ -9,9 +9,13 @@ use rusty_trace::vector::Vec3;
 use rusty_trace::shapes::sphere::Sphere;
 use rusty_trace::shapes::plane::Plane;
 use rusty_trace::shapes::aabb::Aabb;
+use rusty_trace::shapes::naabb::Naabb;
+use rusty_trace::rotate::Rotation;
+
+use image::load_from_memory;
 
 use std::time::Instant;
-
+use std::iter::Iterator;
 
 fn main() {
     let options = Cfg {
@@ -39,9 +43,22 @@ fn main() {
             0.,
         ),
         objects: vec![
-            Box::new( Aabb {
-                min: Vec3::new(-1., 0., -3.),
-                max: Vec3::new(3.0, 3.0, 3.0),
+            Box::new( Naabb {
+                min: Vec3::new(-5.0, 0.0, 0.0),
+                max: Vec3::new(2.0, 2.0, 2.0),
+                material: Material {
+                    color: Color::from_u8(0xD4, 0xAF, 0x37),
+                    diffuse: 0.8,
+                    specular: 0.2,
+                    specular_exponent: 5.0,
+                    reflectiveness: 0.6,
+                    opacity: 1.0,
+                },
+                rotation: Rotation::new(45.0, 0.0, 0.0),
+            }),
+            Box::new(Aabb {
+                min: Vec3::new(-1., 0., -10.),
+                max: Vec3::new(3.0, 3.0, 0.0),
                 material: Material {
                     color: Color::from_u8(0xD4, 0xAF, 0x37),
                     diffuse: 0.8,
@@ -167,10 +184,22 @@ fn main() {
     };
 
     let now = Instant::now();
-    renderer.render_to_file("result.png".to_string());
-    let duration = now.elapsed();
+    use std::iter::once;
 
-    // let buf = renderer.render_to_buf(); TODO render to window buffer
+    let buf: Vec<u8> = renderer.render().iter().flat_map(|c| {
+        let b = (c >> 0) as u8;
+        let g = (c >> 16) as u8;
+        let r = (c >> 24) as u8;
+        once(r).chain(once(g).chain(once(b)))
+    }).collect();
+
+    if let Ok(image) = load_from_memory(buf.as_slice()) {
+        image.save("result.png".to_string());
+    } else {
+        panic!("Failed to load from buffer");
+    }
+    //renderer.render_to_file("result.png".to_string());
+    let duration = now.elapsed();
 
     println!(
         "{} milliseconds elapsed.",

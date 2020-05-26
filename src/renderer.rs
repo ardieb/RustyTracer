@@ -4,8 +4,10 @@ use crate::shapes::Shape;
 use crate::light::Light;
 use crate::cfg::Cfg;
 use crate::ray::Ray;
+
 use rayon::prelude::*;
 use image::ImageBuffer;
+
 
 #[derive(Debug)]
 pub struct Renderer {
@@ -19,6 +21,28 @@ pub struct Renderer {
 }
 
 impl Renderer {
+
+    pub fn render(&self) -> Vec<u32> {
+        let gamma_correction = self.options.gamma.recip();
+        let w = f64::from(self.width);
+        let h = f64::from(self.height);
+        (0..self.width * self.height)
+            .into_par_iter()
+            .map(|pixel| {
+                let x = (pixel % self.height) as u32;
+                let y = (pixel / self.height) as u32;
+
+                let u = f64::from(x) / w;
+                let v = f64::from(y) / h;
+
+                let ray = self.camera.get_ray(u, v);
+
+                Ray::cast_ray(ray, &self.objects, &self.lights, &self.options, 0)
+                    .unwrap_or(self.bg_color).to_u32(gamma_correction)
+            })
+            .collect()
+    }
+
     pub fn render_to_file(&self, filename: String) {
         let mut imgbuf = ImageBuffer::new(self.width, self.height);
 
@@ -41,27 +65,5 @@ impl Renderer {
         }
 
         imgbuf.save(filename).unwrap();
-    }
-
-    pub fn render_to_buf(&self) -> Vec<u32> {
-        let w = f64::from(self.width);
-        let h = f64::from(self.height);
-        let gamma_correction = self.options.gamma.recip();
-        (0..self.width * self.height)
-            .into_par_iter()
-            .map(|pixel| {
-                let x = (pixel % self.height) as u32;
-                let y = (pixel / self.height) as u32;
-
-                let u = f64::from(x) / w;
-                let v = f64::from(y) / h;
-
-                let ray = self.camera.get_ray(u, v);
-
-                let color = Ray::cast_ray(ray, &self.objects, &self.lights, &self.options, 2)
-                    .unwrap_or(self.bg_color);
-                color.to_u32(gamma_correction)
-            })
-            .collect()
     }
 }

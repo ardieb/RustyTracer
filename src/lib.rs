@@ -9,5 +9,6 @@ pub mod ray;
 pub mod renderer;
 pub mod vector;
 pub mod shapes;
+pub mod rotate;
 
 const EPSILON: f64 = 1e-6;
