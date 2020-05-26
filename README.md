@@ -1,5 +1,5 @@
 # RustyTracer
-This is a pet project to test the waterr with rust and ray tracing! So far, things are going great, but there's still lots to do.
+This is a pet project to test the waters with rust and ray tracing! So far, things are going great, but there's still lots to do.
 
 # Todo Items
 - ✔️ Add support for non-axis aligned bounding boxes 
