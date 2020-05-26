@@ -15,3 +15,4 @@ pub mod sphere;
 pub mod plane;
 pub mod aabb;
 pub mod naabb;
+pub mod triangle;

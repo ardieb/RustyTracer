@@ -10,6 +10,7 @@ use rusty_tracer::shapes::sphere::Sphere;
 use rusty_tracer::shapes::plane::Plane;
 use rusty_tracer::shapes::aabb::Aabb;
 use rusty_tracer::shapes::naabb::Naabb;
+use rusty_tracer::shapes::triangle::Triangle;
 use rusty_tracer::rotate::Rotation;
 
 use pixels::{wgpu::Surface, Pixels, SurfaceTexture};
@@ -95,14 +96,27 @@ fn main() {
         width,
         height,
         camera: Camera::new(
-            Vec3::new(-10., 10., 10.),
+            Vec3::new(-10., -3., 10.),
             Vec3::new(0., 0., -20.),
             60.,
             aspect_ratio,
             0.,
         ),
         objects: vec![
-            Box::new( Naabb {
+            Box::new(Triangle {
+                a: Vec3::new(-10.0, 0.0, 5.0),
+                b: Vec3::new(0.0, 5.0, -3.0),
+                c: Vec3::new(5.0, 0.0, -3.0),
+                material: Material {
+                    color: Color::from_u8(0x08, 0x08, 0x08),
+                    diffuse: 0.0,
+                    specular: 50.0,
+                    specular_exponent: 100.0,
+                    reflectiveness: 1.0,
+                    opacity: 1.0
+                },
+            }),
+            Box::new(Naabb {
                 min: Vec3::new(-5.0, 0.0, 0.0),
                 max: Vec3::new(2.0, 2.0, 2.0),
                 material: Material {
