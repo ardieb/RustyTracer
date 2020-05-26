@@ -95,7 +95,7 @@ fn main() {
         width,
         height,
         camera: Camera::new(
-            Vec3::new(0., 10., 10.),
+            Vec3::new(-10., 10., 10.),
             Vec3::new(0., 0., -20.),
             60.,
             aspect_ratio,
