@@ -7,6 +7,7 @@ pub struct Material {
     pub specular: f64,
     pub specular_exponent: f64,
     pub reflectiveness: f64,
+    pub opacity: f64,
 }
 
 impl Material {
@@ -17,6 +18,7 @@ impl Material {
             specular: 0.0,
             specular_exponent: 0.0,
             reflectiveness: 0.0,
+            opacity: 1.0,
         }
     }
 }

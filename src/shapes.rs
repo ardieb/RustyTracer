@@ -14,3 +14,4 @@ pub trait Shape: Debug + Sync {
 pub mod sphere;
 pub mod plane;
 pub mod aabb;
+pub mod naabb;

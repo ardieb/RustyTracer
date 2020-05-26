@@ -58,6 +58,14 @@ impl Vec3 {
     pub fn inv(&self) -> Vec3 {
         Vec3::new(1.0/self.x, 1.0/self.y, 1.0/self.z)
     }
+
+    pub fn from_slice(arr: &[f64]) -> Vec3 {
+        Vec3 {
+            x: arr[0],
+            y: arr[1],
+            z: arr[2],
+        }
+    }
 }
 
 impl Add for Vec3 {

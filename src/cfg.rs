@@ -6,4 +6,5 @@ pub struct Cfg {
     pub specular: bool,
     pub shadows: bool,
     pub reflections: bool,
+    pub opacity: bool,
 }

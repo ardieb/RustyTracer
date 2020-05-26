@@ -9,11 +9,11 @@ use rusty_trace::vector::Vec3;
 use rusty_trace::shapes::sphere::Sphere;
 use rusty_trace::shapes::plane::Plane;
 use rusty_trace::shapes::aabb::Aabb;
+use rusty_trace::shapes::naabb::NAabb;
+use rusty_trace::transformations::Rotation;
 
 use std::time::Instant;
-use arrayfire;
-use arrayfire::Array;
-use arrayfire::Dim4;
+
 
 fn main() {
     let options = Cfg {
@@ -23,6 +23,7 @@ fn main() {
         specular: true,
         shadows: true,
         reflections: true,
+        opacity: true,
     };
 
     let width = 1920;
@@ -40,6 +41,19 @@ fn main() {
             0.,
         ),
         objects: vec![
+            Box::new(NAabb {
+                min: Vec3::new(6.0, 6.0, 6.0),
+                max: Vec3::new(4.0, 4.0, 4.0),
+                material: Material {
+                    color: Color::from_u8(0x40, 0xe0, 0xd0),
+                    diffuse: 0.6,
+                    specular: 5.0,
+                    specular_exponent: 500.0,
+                    reflectiveness: 0.0,
+                    opacity: 1.0
+                },
+                rotation: Rotation::new(0.0, 0.0, 30.0),
+            }),
             Box::new( Aabb {
                 min: Vec3::new(-1., 0., -3.),
                 max: Vec3::new(3.0, 3.0, 3.0),
@@ -49,10 +63,11 @@ fn main() {
                     specular: 0.2,
                     specular_exponent: 5.0,
                     reflectiveness: 0.6,
+                    opacity: 1.0,
                 },
             }),
             Box::new(Sphere {
-                position: Vec3::new(-3.0, -5.0, -16.0),
+                position: Vec3::new(3.0, 3.0, -3.0),
                 radius: 2.8,
                 material: Material {
                     color: Color::from_u8(0xff, 0x55, 0x55),
@@ -60,10 +75,23 @@ fn main() {
                     specular: 50.0,
                     specular_exponent: 100.0,
                     reflectiveness: 0.0,
+                    opacity: 1.0
                 },
             }),
             Box::new(Sphere {
-                position: Vec3::new(0.0, -5.0, -13.0),
+                position: Vec3::new(-10.0, -5.0, -16.0),
+                radius: 2.8,
+                material: Material {
+                    color: Color::from_u8(0xff, 0x55, 0x55),
+                    diffuse: 0.6,
+                    specular: 50.0,
+                    specular_exponent: 100.0,
+                    reflectiveness: 0.0,
+                    opacity: 1.0
+                },
+            }),
+            Box::new(Sphere {
+                position: Vec3::new(10.0, -5.0, -13.0),
                 radius: 2.0,
                 material: Material {
                     color: Color::from_u8(0x40, 0xe0, 0xd0),
@@ -71,10 +99,11 @@ fn main() {
                     specular: 5.0,
                     specular_exponent: 500.0,
                     reflectiveness: 0.0,
+                    opacity: 1.0
                 },
             }),
             Box::new(Sphere {
-                position: Vec3::new(3.0, -5.0, -17.0),
+                position: Vec3::new(3.0, -5.0, -20.0),
                 radius: 2.8,
                 material: Material {
                     color: Color::from_u8(0x77, 0xbb, 0x77),
@@ -82,10 +111,11 @@ fn main() {
                     specular: 0.2,
                     specular_exponent: 2.0,
                     reflectiveness: 0.0,
+                    opacity: 1.0
                 },
             }),
             Box::new(Sphere {
-                position: Vec3::new(0.0, -4.0, -20.0),
+                position: Vec3::new(5.0, -4.0, -30.0),
                 radius: 3.0,
                 material: Material {
                     color: Color::from_u8(0x2f, 0x8d, 0xff),
@@ -93,6 +123,7 @@ fn main() {
                     specular: 3.0,
                     specular_exponent: 50.0,
                     reflectiveness: 0.0,
+                    opacity: 1.0
                 },
             }),
             Box::new(Sphere {
@@ -104,6 +135,7 @@ fn main() {
                     specular: 50.0,
                     specular_exponent: 100.0,
                     reflectiveness: 1.0,
+                    opacity: 1.0
                 },
             }),
             Box::new(Plane {
@@ -115,6 +147,7 @@ fn main() {
                     specular: 0.2,
                     specular_exponent: 5.0,
                     reflectiveness: 0.6,
+                    opacity: 1.0
                 },
             }),
         ],
