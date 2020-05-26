@@ -7,3 +7,6 @@ This is a pet project to test the waterr with rust and ray tracing! So far, thin
 ✔️ Add support for rendering to the window (Done with pixels 0.0.4 & winit)
 - Vectorize computations using OpenCL arrayfire (Might not be worth it bc of memory move costs)
 - Add collision detection for world objects
+
+Image Results: 
+![alt text](https://github.com/ardieb/RustyTracer/blob/master/result.png "Logo Title Text 1")
