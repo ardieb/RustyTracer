@@ -104,15 +104,15 @@ fn main() {
         ),
         objects: vec![
             Box::new(Triangle {
-                a: Vec3::new(-10.0, 0.0, 5.0),
-                b: Vec3::new(0.0, 5.0, -3.0),
-                c: Vec3::new(5.0, 0.0, -3.0),
+                a: Vec3::new(0.0, 0.0,-4.0),
+                b: Vec3::new(0.0, 2.0, -4.0),
+                c: Vec3::new(2.0, 0.0, -4.0),
                 material: Material {
-                    color: Color::from_u8(0x08, 0x08, 0x08),
+                    color: Color::from_u8(0xFF, 0xFF, 0xFF),
                     diffuse: 0.0,
                     specular: 50.0,
-                    specular_exponent: 100.0,
-                    reflectiveness: 1.0,
+                    specular_exponent: 5.0,
+                    reflectiveness: 0.5,
                     opacity: 1.0
                 },
             }),

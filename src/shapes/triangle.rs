@@ -13,26 +13,24 @@ pub struct Triangle {
 
 impl Shape for Triangle {
     fn intersect(&self, ray: Ray) -> Option<f64> {
-        let ab = self.b - self.a;
         let ac = self.c - self.a;
-        let pvec = ray.direction.cross(ac);
-        let det = ab.dot(pvec);
-        if det.abs() < crate::EPSILON {
-            None
-        } else {
-            let tvec = ray.origin - self.a;
-            let u = tvec.dot(pvec) / det;
-            if u < 0.0 || u > 1.0 {
-                None
+        let ab = self.b - self.a;
+        let bc = self.c - self.b;
+        let normal = ab.cross(bc).normalize();
+
+        let denom = ray.direction.dot(normal);
+        if denom.abs() > crate::EPSILON {
+            let t = (self.a - ray.origin).dot(normal) / denom;
+            let p = ray.origin + ray.direction * t;
+            if ab.cross(p - self.a).dot(normal) < 0.0 &&
+                bc.cross(p - self.b).dot(normal) < 0.0 &&
+                ac.cross(p - self.c).dot(normal) < 0.0 {
+                Some(t)
             } else {
-                let qvec = tvec.cross(ab);
-                let v = ray.direction.dot(qvec) / det;
-                if v < 0.0 || u + v > 1.0 {
-                    None
-                } else {
-                    Some(ac.dot(qvec) / det)
-                }
+                None
             }
+        } else {
+            None
         }
     }
 
@@ -43,6 +41,6 @@ impl Shape for Triangle {
     fn normal(&self, _hit_point: Vec3) -> Vec3 {
         let ab = self.b - self.a;
         let ac = self.c - self.a;
-        -ab.cross(ac)
+        -ab.cross(ac).normalize()
     }
 }
