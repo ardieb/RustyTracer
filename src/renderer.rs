@@ -8,7 +8,6 @@ use crate::ray::Ray;
 use rayon::prelude::*;
 use image::ImageBuffer;
 
-
 #[derive(Debug)]
 pub struct Renderer {
     pub width: u32,
@@ -29,8 +28,9 @@ impl Renderer {
         (0..self.width * self.height)
             .into_par_iter()
             .map(|pixel| {
-                let x = (pixel % self.height) as u32;
-                let y = (pixel / self.height) as u32;
+
+                let x = pixel % self.width;
+                let y = pixel / self.width;
 
                 let u = f64::from(x) / w;
                 let v = f64::from(y) / h;

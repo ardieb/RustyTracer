@@ -12,10 +12,69 @@ use rusty_trace::shapes::aabb::Aabb;
 use rusty_trace::shapes::naabb::Naabb;
 use rusty_trace::rotate::Rotation;
 
-use image::load_from_memory;
-
+use pixels::{wgpu::Surface, Pixels, SurfaceTexture};
+use winit::dpi::LogicalSize;
+use winit::event::{Event, VirtualKeyCode};
+use winit::event_loop::{ControlFlow, EventLoop};
+use winit::window::WindowBuilder;
+use winit_input_helper::WinitInputHelper;
 use std::time::Instant;
-use std::iter::Iterator;
+
+fn render_to_window(width: u32, height: u32, buffer: Vec<u32>) {
+    let event_loop = EventLoop::new();
+    let mut input = WinitInputHelper::new();
+    let window = {
+        let size = LogicalSize::new(width as f64, height as f64);
+        WindowBuilder::new()
+            .with_title("Rusty Tracer")
+            .with_inner_size(size)
+            .with_min_inner_size(size)
+            .build(&event_loop)
+            .unwrap()
+    };
+
+    let mut hidpi_factor = window.scale_factor();
+
+    let mut pixels = {
+        let surface = Surface::create(&window);
+        let surface_texture = SurfaceTexture::new(width, height, surface);
+        Pixels::new(width, height, surface_texture).unwrap()
+    };
+    let mut frame = pixels.get_frame();
+    for (i, pixel) in frame.chunks_exact_mut(4).enumerate() {
+        let c = buffer[i];
+        pixel.copy_from_slice(&[((c >> 16) & 255) as u8, ((c >> 8) & 255) as u8, (c & 255) as u8, 255]);
+    }
+
+    event_loop.run(move |event, _, control_flow| {
+        // Draw the current frame
+        if let Event::RedrawRequested(_) = event {
+            if !pixels.render().is_ok() {
+                *control_flow = ControlFlow::Exit;
+                return;
+            }
+        }
+        // Handle input events
+        if input.update(event) {
+            // Close events
+            if input.key_pressed(VirtualKeyCode::Escape) || input.quit() {
+                *control_flow = ControlFlow::Exit;
+                return;
+            }
+            // Adjust high DPI factor
+            if let Some(factor) = input.scale_factor_changed() {
+                hidpi_factor = factor;
+            }
+            // Resize the window
+            if let Some(size) = input.window_resized() {
+                pixels.resize(size.width, size.height);
+            }
+            // Update internal state and request a redraw
+            window.request_redraw();
+        }
+    });
+}
+
 
 fn main() {
     let options = Cfg {
@@ -184,25 +243,20 @@ fn main() {
     };
 
     let now = Instant::now();
-    use std::iter::once;
 
-    let buf: Vec<u8> = renderer.render().iter().flat_map(|c| {
-        let b = (c >> 0) as u8;
-        let g = (c >> 16) as u8;
-        let r = (c >> 24) as u8;
-        once(r).chain(once(g).chain(once(b)))
-    }).collect();
+    //let buf: Vec<u8> = renderer.render();
 
-    if let Ok(image) = load_from_memory(buf.as_slice()) {
-        image.save("result.png".to_string());
-    } else {
-        panic!("Failed to load from buffer");
-    }
+    //match image::save_buffer("result.png", buf.as_slice(), width, height, image::ColorType::Rgb8) {
+    //    Ok(()) => println!("Saved image to result.png"),
+    //    Err(err) => println!("Failed to save image. Encounter error {}", err),
+    //}
+
     //renderer.render_to_file("result.png".to_string());
+    let buf: Vec<u32> = renderer.render();
     let duration = now.elapsed();
-
     println!(
         "{} milliseconds elapsed.",
         duration.as_secs() * 1000 + u64::from(duration.subsec_millis())
     );
+    render_to_window(width, height, buf);
 }
