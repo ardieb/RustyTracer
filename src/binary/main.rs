@@ -9,8 +9,6 @@ use rusty_trace::vector::Vec3;
 use rusty_trace::shapes::sphere::Sphere;
 use rusty_trace::shapes::plane::Plane;
 use rusty_trace::shapes::aabb::Aabb;
-use rusty_trace::shapes::naabb::NAabb;
-use rusty_trace::transformations::Rotation;
 
 use std::time::Instant;
 
@@ -41,19 +39,6 @@ fn main() {
             0.,
         ),
         objects: vec![
-            Box::new(NAabb {
-                min: Vec3::new(6.0, 6.0, 6.0),
-                max: Vec3::new(4.0, 4.0, 4.0),
-                material: Material {
-                    color: Color::from_u8(0x40, 0xe0, 0xd0),
-                    diffuse: 0.6,
-                    specular: 5.0,
-                    specular_exponent: 500.0,
-                    reflectiveness: 0.0,
-                    opacity: 1.0
-                },
-                rotation: Rotation::new(0.0, 0.0, 30.0),
-            }),
             Box::new( Aabb {
                 min: Vec3::new(-1., 0., -3.),
                 max: Vec3::new(3.0, 3.0, 3.0),
