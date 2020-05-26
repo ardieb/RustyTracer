@@ -1,5 +1,5 @@
 [package]
-name = "rusty_trace"
+name = "rusty_tracer"
 version = "0.1.0"
 authors = ["Arthur Burke <amb556@cornell.edu>"]
 edition = "2018"

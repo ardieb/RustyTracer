@@ -1,16 +1,16 @@
-use rusty_trace::camera::Camera;
-use rusty_trace::color::Color;
-use rusty_trace::light::Light;
-use rusty_trace::light::LightType;
-use rusty_trace::material::Material;
-use rusty_trace::cfg::Cfg;
-use rusty_trace::renderer::Renderer;
-use rusty_trace::vector::Vec3;
-use rusty_trace::shapes::sphere::Sphere;
-use rusty_trace::shapes::plane::Plane;
-use rusty_trace::shapes::aabb::Aabb;
-use rusty_trace::shapes::naabb::Naabb;
-use rusty_trace::rotate::Rotation;
+use rusty_tracer::camera::Camera;
+use rusty_tracer::color::Color;
+use rusty_tracer::light::Light;
+use rusty_tracer::light::LightType;
+use rusty_tracer::material::Material;
+use rusty_tracer::cfg::Cfg;
+use rusty_tracer::renderer::Renderer;
+use rusty_tracer::vector::Vec3;
+use rusty_tracer::shapes::sphere::Sphere;
+use rusty_tracer::shapes::plane::Plane;
+use rusty_tracer::shapes::aabb::Aabb;
+use rusty_tracer::shapes::naabb::Naabb;
+use rusty_tracer::rotate::Rotation;
 
 use pixels::{wgpu::Surface, Pixels, SurfaceTexture};
 use winit::dpi::LogicalSize;
@@ -20,11 +20,11 @@ use winit::window::WindowBuilder;
 use winit_input_helper::WinitInputHelper;
 use std::time::Instant;
 
-fn render_to_window(width: u32, height: u32, buffer: Vec<u32>) {
+fn display(width: u32, height: u32, buffer: Vec<u32>) {
     let event_loop = EventLoop::new();
     let mut input = WinitInputHelper::new();
     let window = {
-        let size = LogicalSize::new(width as f64, height as f64);
+        let size = LogicalSize::new(width as f64 / 2.0, height as f64 / 2.0);
         WindowBuilder::new()
             .with_title("Rusty Tracer")
             .with_inner_size(size)
@@ -95,7 +95,7 @@ fn main() {
         width,
         height,
         camera: Camera::new(
-            Vec3::new(0., -3., 10.),
+            Vec3::new(0., 10., 10.),
             Vec3::new(0., 0., -20.),
             60.,
             aspect_ratio,
@@ -258,5 +258,5 @@ fn main() {
         "{} milliseconds elapsed.",
         duration.as_secs() * 1000 + u64::from(duration.subsec_millis())
     );
-    render_to_window(width, height, buf);
+    display(width, height, buf);
 }
